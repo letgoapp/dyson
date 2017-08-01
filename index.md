@@ -33,19 +33,19 @@ This is where dyson comes in. Get a full fake server for your application up and
 
 * Easy configuration, extensive options
 * Dynamic responses
-    * Responses can use request data (e.g. to simulate different login scenarios based on username):
-        * Request path
-        * GET/POST parameters
-        * Cookies
-    * Respond with different status code for specific requests (e.g. 404 for `?id=999`)
-    * Includes random data generators
+  * Responses can use request data (e.g. to simulate different login scenarios based on username):
+    * Request path
+    * GET/POST parameters
+    * Cookies
+  * Respond with different status code for specific requests (e.g. 404 for `?id=999`)
+  * Includes random data generators
 * Supports to proxy non-configured endpoints to actual services
 * Supports GET, POST, PUT, DELETE, PATCH (and OPTIONS)
 * Supports CORS
 * Supports delayed responses
 * Includes dummy image generator
-    * Use any external or local image service (included)
-    * Supports base64 encoded image strings
+  * Use any external or local image service (included)
+  * Supports base64 encoded image strings
 * Supports required parameter validation
 
 ## Endpoint Configuration
@@ -54,16 +54,16 @@ Configure endpoints using simple objects:
 
 ``` javascript
 module.exports = {
-    path: '/user/:id',
-    method: 'GET',
-    template: {
-        id: (params, query, body) =>params.id,
-        name: g.name,
-        address: {
-            zip: g.zipUS,
-            city: g.city
-        }
+  path: '/user/:id',
+  method: 'GET',
+  template: {
+    id: (params, query, body) =>params.id,
+    name: g.name,
+    address: {
+      zip: g.zipUS,
+      city: g.city
     }
+  }
 }
 ```
 
@@ -90,13 +90,13 @@ The default values for the configuration objects:
 
 ``` javascript
 module.exports = {
-    cache: false,
-    delay: false,
-    proxy: false,
-    size: () => _.random(2,10),
-    collection: false,
-    callback: response.generate,
-    render: response.render
+  cache: false,
+  delay: false,
+  proxy: false,
+  size: () => _.random(2,10),
+  collection: false,
+  callback: response.generate,
+  render: response.render
 };
 ```
 
@@ -106,12 +106,12 @@ module.exports = {
 * `size:function` is the number of objects in the collection
 * `collection:true` will return a collection
 * `callback:function`
-    * the provided default function is doing the hard work (but can be overridden)
-    * used as middleware in Express
-    * must set `res.body` and call `next()` to render response
+  * the provided default function is doing the hard work (but can be overridden)
+  * used as middleware in Express
+  * must set `res.body` and call `next()` to render response
 * `render:function`
-    * the default function to render the response (basically `res.send(200, res.body);`)
-    * used as middleware in Express
+  * the default function to render the response (basically `res.send(200, res.body);`)
+  * used as middleware in Express
 
 ## Fake data generators
 
@@ -135,21 +135,21 @@ Containers can help if you need to send along some meta data, or wrap the respon
 
 ``` javascript
 module.exports = {
-    path: '/users',
-    template: user.template,
-    container: {
-        meta: (params, query, data) => ({
-            userCount: data.length
-        }),
-        data: {
-            all: [],
-            the: {
-                way: {
-                    here: (params, query, data) => data
-                }
-            }
+  path: '/users',
+  template: user.template,
+  container: {
+    meta: (params, query, data) => ({
+      userCount: data.length
+    }),
+    data: {
+      all: [],
+      the: {
+        way: {
+          here: (params, query, data) => data
         }
+      }
     }
+  }
 }
 ```
 
@@ -164,16 +164,13 @@ And an example response:
     "all": [],
     "the": {
       "way": {
-        "here": [
-          {
-            "id": 412,
-            "name": "John"
-          },
-          {
-            "id": 218,
-            "name": "Olivia"
-          }
-        ]
+        "here": [{
+          "id": 412,
+          "name": "John"
+        }, {
+          "id": 218,
+          "name": "Olivia"
+        }]
       }
     }
   }
@@ -186,7 +183,7 @@ Basic support for "combined" requests is available, by means of a comma separate
 
 For example, a request to `/user/5,13` will result in an array of the responses from `/user/5` and `/user/13`.
 
-The `,` delimiter can be [configured](project-configuration) (or disabled).
+The `,` delimiter can be [configured](#project-configuration) (or disabled).
 
 ## Status codes
 
@@ -196,13 +193,13 @@ This can be overridden with your own `status` middleware, e.g.:
 
 ``` javascript
 module.exports = {
-    path: '/feature/:foo?',
-    status: (req, res, next) => {
-        if(req.params.foo === '999') {
-            res.status(404);
-        }
-        next();
+  path: '/feature/:foo?',
+  status: (req, res, next) => {
+    if(req.params.foo === '999') {
+      res.status(404);
     }
+    next();
+  }
 }
 ```
 
@@ -214,15 +211,15 @@ Override the `render` method of the Express middleware in the endpoint definitio
 
 ``` javascript
 module.exports = {
-    render: (req, res) => {
-        const callback = req.query.callback;
-        if (callback) {
-            res.append('Content-Type', 'application/javascript');
-            res.send(`${callback}(${JSON.stringify(res.body)});`);
-        } else {
-            res.send(res.body);
-        }
+  render: (req, res) => {
+    const callback = req.query.callback;
+    if (callback) {
+      res.append('Content-Type', 'application/javascript');
+      res.send(`${callback}(${JSON.stringify(res.body)});`);
+    } else {
+      res.send(res.body);
     }
+  }
 }
 ```
 
@@ -234,12 +231,12 @@ If you want to run dyson over https:// you have to provide a self-signed (or aut
 const fs = require('fs');
 
 dyson.bootstrap({
-    configDir: `${__dirname}/dummy`,
-    port: 3001,
-    https: {
-        key: fs.readFileSync(`${__dirname}'/certs/sample.key`),
-        crt: fs.readFileSync(`${__dirname}/certs/sample.crt`)
-    }
+  configDir: `${__dirname}/dummy`,
+  port: 3001,
+  https: {
+    key: fs.readFileSync(`${__dirname}'/certs/sample.key`),
+    crt: fs.readFileSync(`${__dirname}/certs/sample.crt`)
+  }
 });
 ```
 
@@ -248,20 +245,20 @@ dyson.bootstrap({
 ## Custom middleware
 
 If you need some custom middleware before or after the endpoints are registered, dyson can be initialized programmatically.
-Then you can use `appBefore` or `appAfter` to install middleware before or after the dyson services are registered. An example:
+Then you can use the Express server instance (`appBefore` or `appAfter` in the example below) to install middleware before or after the dyson services are registered. An example:
 
 ``` javascript
-const dyson = require('dyson'),
-    path = require('path');
+const dyson = require('dyson');
+const path = require('path');
 
 const options = {
-    configDir: path.join(__dirname, 'services'),
-    port: 8765
+  configDir: path.join(__dirname, 'services'),
+  port: 8765
 };
 
-const configs = dyson.getConfigurations(options),
-    appBefore = dyson.createServer(options),
-    appAfter = dyson.registerServices(appBefore, options, configs);
+const configs = dyson.getConfigurations(options);
+const appBefore = dyson.createServer(options);
+const appAfter = dyson.registerServices(appBefore, options, configs);
 
 console.log(`Dyson listening at port ${options.port}`);
 ```
@@ -269,17 +266,19 @@ console.log(`Dyson listening at port ${options.port}`);
 Dyson configuration can also be installed into any Express server:
 
 ``` javascript
-const express = require('express'),
-    dyson = require('./lib/dyson'),
-    path = require('path');
+const express = require('express');
+const dyson = require('./lib/dyson');
+const path = require('path');
 
-var options = {
-    configDir: path.join(__dirname, 'services')
+const options = {
+  configDir: path.join(__dirname, 'services')
 };
 
-var myApp = express();
-var configs = dyson.getConfigurations(options);
+const myApp = express();
+const configs = dyson.getConfigurations(options);
+
 dyson.registerServices(myApp, options, configs);
+
 myApp.listen(8765);
 ```
 
@@ -331,17 +330,28 @@ Optionally, you can put a `dyson.json` file next to the configuration folders (i
 
 ``` json
 {
-    "multiRequest": ",",
-    "proxy": true,
-    "proxyHost": "http://dyson.jit.su",
-    "proxyPort": 8080,
-    "proxyDelay": [200, 800]
+  "multiRequest": ",",
+  "proxy": true,
+  "proxyHost": "http://dyson.jit.su",
+  "proxyPort": 8080,
+  "proxyDelay": [200, 800]
 }
 ```
 
 * Setting `multiRequest` to `false` disables the [combined requests](#combined-requests) feature.
 * Setting `bodyParserJsonLimit` or `bodyParserUrlencodedLimit` to `1mb` increases the limit to 1mb from the bodyParser's default of 100kb.
 * By default, the `proxy` is set to `false`
+
+## Watch/auto-restart
+
+If you want to automatically restart dyson when you change your configuration objects, you can add [nodemon](https://nodemon.io) as a `devDependency`. Say your configuration files are in the `./api` folder, you can put this in your `package.json`:
+
+```
+"scripts": {
+  "api": "dyson api",
+  "watch": "nodemon --watch api --exec dyson api"
+}
+```
 
 ## Development & run tests
 
@@ -359,6 +369,9 @@ npm test
 * [Dyson, construye un servidor de pruebas que devuelva fake JSON para simular una API](http://www.genbetadev.com/herramientas/dyson-construye-un-servidor-de-pruebas-que-devuelva-fake-json-para-simular-una-api)
 * [Mockear la capa back con Dyson](http://www.adictosaltrabajo.com/tutoriales/tutoriales.php?pagina=DysonFakeJSON)
 * [Serve JSONP in Dyson](https://grysz.com/2015/12/01/serve-jsonp-in-dyson/)
+* Videos
+	* [Dyson - HTTP Service mocking](https://www.youtube.com/watch?v=aoSk5Bak-KM)
+	* [How to implement HTTP Mock Services into Webpack - Dyson](https://www.youtube.com/watch?v=tfCQOcz9oi4)
 
 ## License
 
